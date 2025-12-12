@@ -1,0 +1,67 @@
+.card {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card:active {
+  transform: translateY(-2px);
+}
+
+.imageSection {
+  position: relative;
+  overflow: hidden;
+}
+
+.imageSection img {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .imageSection img {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  opacity: 0;
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .overlay {
+  opacity: 1;
+}
+
+.title {
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .title {
+  color: var(--mantine-color-green-6);
+}
+
+.button {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover {
+  transform: scale(1.02);
+}
+
+.button:active {
+  transform: scale(0.98);
+}

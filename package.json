@@ -13,20 +13,20 @@
     "clean": "rm -rf .next out node_modules/.cache"
   },
   "dependencies": {
+    "@mantine/charts": "^8.3.10",
     "@mantine/core": "^8.3.10",
     "@mantine/form": "^8.3.10",
     "@mantine/hooks": "^8.3.10",
     "@mantine/modals": "^8.3.10",
     "@mantine/notifications": "^8.3.10",
     "@tabler/icons-react": "^3.35.0",
-    "@tanstack/query-sync-storage-persister": "^5.90.14",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
-    "@tanstack/react-query-persist-client": "^5.90.14",
     "axios": "^1.13.2",
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
+    "recharts": "^3.5.1",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

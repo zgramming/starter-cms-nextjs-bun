@@ -1,86 +1,164 @@
-import { AdminLayout } from "@/components/layouts/AdminLayout";
-import { CategorySection } from "@/components/dashboard/CategorySection";
-import { Container, Title, Text } from "@mantine/core";
-import { Category } from "@/types";
+import { AdminLayout } from "@/shared/components/layout/AdminLayout";
+import { CategorySection } from "@/shared/components/ui/CategorySection";
+import { Stack, Title } from "@mantine/core";
+import type { Category } from "@/types/app-structure";
 
-// Mock data - replace with actual API call
+// Mock data untuk kategori dan modul
 const mockCategories: Category[] = [
   {
-    id: "cat-1",
+    id: "1",
     name: "Manajemen Sistem",
-    description: "Kelola sistem dan konfigurasi",
+    description: "Kelola pengguna, peran, dan parameter sistem",
     modules: [
       {
-        id: "mod-1",
-        categoryId: "cat-1",
+        id: "user",
+        categoryId: "1",
         name: "User Management",
-        description: "Kelola user dan hak akses",
-        image: "https://via.placeholder.com/300x160/667eea/ffffff?text=Users",
-      },
-      {
-        id: "mod-2",
-        categoryId: "cat-1",
-        name: "Role Management",
-        description: "Kelola role dan permission",
-        image: "https://via.placeholder.com/300x160/764ba2/ffffff?text=Roles",
-      },
-      {
-        id: "mod-3",
-        categoryId: "cat-1",
-        name: "Parameter",
-        description: "Kelola parameter sistem",
+        description: "Kelola data pengguna sistem",
         image:
-          "https://via.placeholder.com/300x160/f093fb/ffffff?text=Parameter",
+          "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=400",
+        menus: [
+          {
+            id: "user-list",
+            moduleId: "user",
+            name: "Daftar User",
+            path: "/setting/user",
+            order: 1,
+          },
+        ],
+      },
+      {
+        id: "role",
+        categoryId: "1",
+        name: "Role Management",
+        description: "Kelola peran dan hak akses",
+        image:
+          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400",
+        menus: [
+          {
+            id: "role-list",
+            moduleId: "role",
+            name: "Daftar Role",
+            path: "/setting/role",
+            order: 1,
+          },
+        ],
+      },
+      {
+        id: "parameter",
+        categoryId: "1",
+        name: "Parameter",
+        description: "Konfigurasi parameter aplikasi",
+        image:
+          "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
+        menus: [
+          {
+            id: "parameter-list",
+            moduleId: "parameter",
+            name: "Daftar Parameter",
+            path: "/setting/parameter",
+            order: 1,
+          },
+        ],
       },
     ],
   },
   {
-    id: "cat-2",
+    id: "2",
     name: "Master Data",
     description: "Kelola data master aplikasi",
     modules: [
       {
-        id: "mod-4",
-        categoryId: "cat-2",
+        id: "master-category",
+        categoryId: "2",
         name: "Master Kategori",
-        description: "Kelola kategori master",
+        description: "Kelola kategori master data",
         image:
-          "https://via.placeholder.com/300x160/4facfe/ffffff?text=Kategori",
+          "https://images.unsplash.com/photo-1507925921958-8a62f3d1a50d?w=400",
+        menus: [
+          {
+            id: "master-category-list",
+            moduleId: "master-category",
+            name: "Daftar Kategori",
+            path: "/setting/master-category",
+            order: 1,
+          },
+        ],
       },
       {
-        id: "mod-5",
-        categoryId: "cat-2",
+        id: "master-data",
+        categoryId: "2",
         name: "Master Data",
-        description: "Kelola data master",
-        image: "https://via.placeholder.com/300x160/00f2fe/ffffff?text=Master",
+        description: "Kelola data master aplikasi",
+        image:
+          "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400",
+        menus: [
+          {
+            id: "master-data-list",
+            moduleId: "master-data",
+            name: "Daftar Master Data",
+            path: "/setting/master-data",
+            order: 1,
+          },
+        ],
       },
     ],
   },
   {
-    id: "cat-3",
+    id: "3",
     name: "Konfigurasi",
-    description: "Konfigurasi menu dan akses",
+    description: "Konfigurasi menu, modul, dan access control",
     modules: [
       {
-        id: "mod-6",
-        categoryId: "cat-3",
-        name: "Menu Management",
+        id: "app-menu",
+        categoryId: "3",
+        name: "Menu",
         description: "Kelola menu aplikasi",
-        image: "https://via.placeholder.com/300x160/43e97b/ffffff?text=Menu",
+        image:
+          "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400",
+        menus: [
+          {
+            id: "app-menu-list",
+            moduleId: "app-menu",
+            name: "Daftar Menu",
+            path: "/setting/app-menu",
+            order: 1,
+          },
+        ],
       },
       {
-        id: "mod-7",
-        categoryId: "cat-3",
-        name: "Modul Management",
+        id: "app-module",
+        categoryId: "3",
+        name: "Modul",
         description: "Kelola modul aplikasi",
-        image: "https://via.placeholder.com/300x160/38f9d7/ffffff?text=Modul",
+        image:
+          "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400",
+        menus: [
+          {
+            id: "app-module-list",
+            moduleId: "app-module",
+            name: "Daftar Modul",
+            path: "/setting/app-module",
+            order: 1,
+          },
+        ],
       },
       {
-        id: "mod-8",
-        categoryId: "cat-3",
+        id: "access-control",
+        categoryId: "3",
         name: "Access Control",
-        description: "Kelola hak akses kategori, modul, menu",
-        image: "https://via.placeholder.com/300x160/fa709a/ffffff?text=Access",
+        description: "Kelola hak akses per modul",
+        image:
+          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400",
+        menus: [
+          {
+            id: "access-control-list",
+            moduleId: "access-control",
+            name: "Daftar Access Control",
+            path: "/setting/access-control",
+            order: 1,
+          },
+        ],
       },
     ],
   },
@@ -89,13 +167,8 @@ const mockCategories: Category[] = [
 export default function DashboardPage() {
   return (
     <AdminLayout>
-      <Container size="xl">
-        <Title order={1} mb="xs">
-          Dashboard
-        </Title>
-        <Text c="dimmed" mb="xl">
-          Pilih kategori dan modul untuk memulai
-        </Text>
+      <Stack gap="xl">
+        <Title order={1}>Dashboard</Title>
 
         {mockCategories.map((category) => (
           <CategorySection
@@ -105,7 +178,7 @@ export default function DashboardPage() {
             categoryId={category.id}
           />
         ))}
-      </Container>
+      </Stack>
     </AdminLayout>
   );
 }

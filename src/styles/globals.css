@@ -13,6 +13,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -21,11 +22,6 @@ body {
   background-color: #f8f9fa;
   color: #212529;
   line-height: 1.6;
-}
-
-/* Smooth Scrolling */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Remove default link styles */
@@ -63,4 +59,88 @@ a {
 :focus-visible {
   outline: 2px solid #22b573;
   outline-offset: 2px;
+}
+
+/* ==================== LAYOUT ==================== */
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+/* Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .content {
+    margin-top: 60px;
+    padding: 16px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .content {
+    padding: 20px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .content {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+/* Page transitions */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pageTransition {
+  animation: fadeIn 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effects */
+.cardHover {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cardHover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Button animations */
+.buttonPress {
+  transition: transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.buttonPress:active {
+  transform: scale(0.95);
 }

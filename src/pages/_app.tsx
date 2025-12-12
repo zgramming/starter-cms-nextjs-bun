@@ -1,17 +1,15 @@
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
-
 import "@/styles/globals.css";
+
 import type { AppProps } from "next/app";
 import { MantineProvider, createTheme } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { ModalsProvider } from "@mantine/modals";
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { useState } from "react";
-import { env } from "@/config/env";
+import { env } from "@/core/config/env";
 
 const theme = createTheme({
   /** Primary Color - Elegant Green Theme */
@@ -129,14 +127,14 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  // Create QueryClient instance - stable reference
+  // Create QueryClient instance
   const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1 minute
-            gcTime: 5 * 60 * 1000, // 5 minutes (formerly cacheTime)
+            gcTime: 5 * 60 * 1000, // 5 minutes
             retry: 1,
             refetchOnWindowFocus: false,
           },
@@ -147,25 +145,8 @@ export default function App({ Component, pageProps }: AppProps) {
       })
   );
 
-  // Create persister untuk localStorage
-  const [persister] = useState(() => {
-    if (typeof window !== "undefined") {
-      return createSyncStoragePersister({
-        storage: window.localStorage,
-        key: "CMS_ADMIN_CACHE",
-      });
-    }
-    return undefined;
-  });
-
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{
-        persister: persister!,
-        maxAge: 1000 * 60 * 60 * 24, // 24 hours
-      }}
-    >
+    <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme}>
         <ModalsProvider>
           <Notifications position="top-right" zIndex={1000} />
@@ -173,6 +154,6 @@ export default function App({ Component, pageProps }: AppProps) {
           {env.enableDevTools && <ReactQueryDevtools initialIsOpen={false} />}
         </ModalsProvider>
       </MantineProvider>
-    </PersistQueryClientProvider>
+    </QueryClientProvider>
   );
 }
