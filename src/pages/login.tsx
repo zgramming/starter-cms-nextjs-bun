@@ -48,12 +48,12 @@ export default function LoginPage() {
     >
       {/* Left Side - Illustration */}
       <Box
+        display="flex"
+        p={rem(60)}
         style={{
           flex: 1,
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: rem(60),
           background: "rgba(255, 255, 255, 0.05)",
           backdropFilter: "blur(10px)",
         }}
@@ -173,12 +173,12 @@ export default function LoginPage() {
 
       {/* Right Side - Login Form */}
       <Box
+        display="flex"
+        bg="white"
         style={{
           flex: 1,
-          display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "white",
         }}
       >
         <Box w="100%" maw={rem(420)} p={rem(40)}>
@@ -271,13 +271,6 @@ export default function LoginPage() {
               LOGIN
             </Button>
           </form>
-
-          <Text ta="center" mt="xl" size="sm">
-            Don't have an account?{" "}
-            <Anchor href="#" c="green.5" fw={600}>
-              Sign up
-            </Anchor>
-          </Text>
         </Box>
       </Box>
     </Box>

@@ -160,10 +160,10 @@ export default function DashboardPage() {
         right={-100}
         w={300}
         h={300}
+        opacity={0.1}
         style={{
           borderRadius: "50%",
           background: "linear-gradient(135deg, #4bc38b 0%, #1a9d62 100%)",
-          opacity: 0.1,
           zIndex: 0,
           pointerEvents: "none",
         }}
@@ -175,10 +175,10 @@ export default function DashboardPage() {
         left={-150}
         w={400}
         h={400}
+        opacity={0.08}
         style={{
           borderRadius: "50%",
           background: "linear-gradient(135deg, #4bc38b 0%, #1a9d62 100%)",
-          opacity: 0.08,
           zIndex: 0,
           pointerEvents: "none",
         }}

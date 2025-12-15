@@ -13,7 +13,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <Box style={{ display: "flex", minHeight: "100vh", background: "#f8f9fa" }}>
+    <Box display="flex" mih="100vh" bg="gray.0">
       {/* Mobile Drawer */}
       {isMobile && (
         <Drawer
@@ -32,10 +32,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Main Content */}
       <Box
+        display="flex"
         style={{
           flex: 1,
           marginLeft: isMobile ? 0 : 260,
-          display: "flex",
           flexDirection: "column",
         }}
       >
@@ -55,9 +55,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         {/* Content Area */}
         <Box
           component="main"
+          p={isMobile ? "md" : "xl"}
           style={{
             flex: 1,
-            padding: isMobile ? "16px" : "24px",
             overflowY: "auto",
           }}
         >

@@ -38,9 +38,9 @@ export function TopBar({ burger }: TopBarProps) {
       justify="space-between"
       px="xl"
       py="md"
+      bg="white"
       style={{
         borderBottom: "1px solid #f1f3f5",
-        background: "white",
       }}
     >
       {/* Left side - Search or Mobile Menu */}
@@ -54,14 +54,14 @@ export function TopBar({ burger }: TopBarProps) {
               ⌘ K
             </Text>
           }
-          style={{ width: burger ? 200 : 400 }}
+          w={burger ? 200 : 400}
           visibleFrom="sm"
           styles={{
             input: {
               borderRadius: rem(12),
               border: "1px solid #e9ecef",
               "&:focus": {
-                borderColor: "#40c057",
+                borderColor: "var(--mantine-color-green-5)",
               },
             },
           }}
@@ -83,10 +83,10 @@ export function TopBar({ burger }: TopBarProps) {
           <Menu.Target>
             <Group
               gap="xs"
+              p="xs"
               style={{
                 cursor: "pointer",
-                padding: "8px 12px",
-                borderRadius: 12,
+                borderRadius: rem(12),
                 transition: "background 0.2s",
                 "&:hover": {
                   background: "#f8f9fa",
