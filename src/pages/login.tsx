@@ -40,10 +40,10 @@ export default function LoginPage() {
 
   return (
     <Box
+      display="flex"
+      mih="100vh"
       style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #40c057 0%, #2f9e44 100%)",
+        background: "linear-gradient(135deg, #22b573 0%, #148551 100%)",
       }}
     >
       {/* Left Side - Illustration */}
@@ -58,7 +58,7 @@ export default function LoginPage() {
           backdropFilter: "blur(10px)",
         }}
       >
-        <Box style={{ textAlign: "center", color: "white" }}>
+        <Box ta="center" c="white">
           {/* Door Illustration with SVG */}
           <svg
             width="300"
@@ -156,20 +156,16 @@ export default function LoginPage() {
           <Title
             order={1}
             mt="xl"
+            size={rem(42)}
+            fw={700}
+            c="white"
             style={{
-              fontSize: rem(42),
-              fontWeight: 700,
-              color: "white",
               textShadow: "0 2px 10px rgba(0,0,0,0.1)",
             }}
           >
             Finexy
           </Title>
-          <Text
-            size="lg"
-            mt="sm"
-            style={{ color: "rgba(255,255,255,0.9)", fontWeight: 500 }}
-          >
+          <Text size="lg" mt="sm" c="rgba(255,255,255,0.9)" fw={500}>
             Modern Admin Dashboard
           </Text>
         </Box>
@@ -185,16 +181,8 @@ export default function LoginPage() {
           background: "white",
         }}
       >
-        <Box style={{ width: "100%", maxWidth: rem(420), padding: rem(40) }}>
-          <Title
-            order={2}
-            style={{
-              fontSize: rem(28),
-              fontWeight: 700,
-              color: "#2f9e44",
-              marginBottom: rem(8),
-            }}
-          >
+        <Box w="100%" maw={rem(420)} p={rem(40)}>
+          <Title order={2} size={rem(28)} fw={700} c="green.7" mb={rem(8)}>
             Login to Dashboard
           </Title>
           <Text size="sm" c="dimmed" mb="xl">
@@ -211,16 +199,16 @@ export default function LoginPage() {
                 label: {
                   fontSize: rem(13),
                   fontWeight: 500,
-                  color: "#495057",
+                  color: "var(--mantine-color-gray-7)",
                   marginBottom: rem(8),
                 },
                 input: {
                   borderRadius: rem(8),
-                  border: "1px solid #dee2e6",
+                  border: "1px solid var(--mantine-color-gray-3)",
                   padding: `${rem(12)} ${rem(16)}`,
                   fontSize: rem(14),
                   "&:focus": {
-                    borderColor: "#40c057",
+                    borderColor: "var(--mantine-color-green-5)",
                   },
                 },
               }}
@@ -237,16 +225,16 @@ export default function LoginPage() {
                 label: {
                   fontSize: rem(13),
                   fontWeight: 500,
-                  color: "#495057",
+                  color: "var(--mantine-color-gray-7)",
                   marginBottom: rem(8),
                 },
                 input: {
                   borderRadius: rem(8),
-                  border: "1px solid #dee2e6",
+                  border: "1px solid var(--mantine-color-gray-3)",
                   padding: `${rem(12)} ${rem(16)}`,
                   fontSize: rem(14),
                   "&:focus": {
-                    borderColor: "#40c057",
+                    borderColor: "var(--mantine-color-green-5)",
                   },
                 },
               }}
@@ -258,8 +246,8 @@ export default function LoginPage() {
                 component="button"
                 type="button"
                 size="sm"
-                c="#40c057"
-                style={{ fontWeight: 500 }}
+                c="green.5"
+                fw={500}
               >
                 Forgot password?
               </Anchor>
@@ -270,15 +258,15 @@ export default function LoginPage() {
               size="md"
               mt="xl"
               type="submit"
-              style={{
-                background: "linear-gradient(135deg, #40c057 0%, #2f9e44 100%)",
-                borderRadius: rem(8),
-                height: rem(48),
-                fontSize: rem(15),
-                fontWeight: 600,
-                boxShadow: "0 4px 12px rgba(64, 192, 87, 0.3)",
-              }}
+              h={rem(48)}
+              fz={rem(15)}
+              fw={600}
               leftSection={<IconLogin size={20} />}
+              style={{
+                background: "linear-gradient(135deg, #22b573 0%, #148551 100%)",
+                borderRadius: rem(8),
+                boxShadow: "0 4px 12px rgba(34, 181, 115, 0.3)",
+              }}
             >
               LOGIN
             </Button>
@@ -286,7 +274,7 @@ export default function LoginPage() {
 
           <Text ta="center" mt="xl" size="sm">
             Don't have an account?{" "}
-            <Anchor href="#" c="#40c057" fw={600}>
+            <Anchor href="#" c="green.5" fw={600}>
               Sign up
             </Anchor>
           </Text>
