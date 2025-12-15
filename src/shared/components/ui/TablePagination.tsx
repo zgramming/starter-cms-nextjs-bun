@@ -1,5 +1,6 @@
-import { Group, Select, Text, Button, Box } from "@mantine/core";
+import { Group, Select, Text, Button } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { env } from "@/core/config/env";
 
 interface TablePaginationProps {
   /**
@@ -40,8 +41,8 @@ interface TablePaginationProps {
 export function TablePagination({
   page,
   total,
-  pageSize,
-  pageSizeOptions = [10, 20, 50, 100],
+  pageSize = env.defaultPageSize,
+  pageSizeOptions = [...env.pageSizeOptions],
   onPageChange,
   onPageSizeChange,
   infoText,
