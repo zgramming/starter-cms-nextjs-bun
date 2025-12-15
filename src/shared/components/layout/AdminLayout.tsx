@@ -1,8 +1,8 @@
-import { Box, Burger, Drawer, AppShell } from "@mantine/core";
+import { Box, Burger, Drawer, ScrollArea } from "@mantine/core";
 import { ReactNode, useState } from "react";
 import { MainSidebar } from "./MainSidebar";
 import { TopBar } from "./TopBar";
-import { useMediaQuery } from "@mantine/hooks";
+import { useIsMobile } from "@/shared/hooks/useIsMobile";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const [drawerOpened, setDrawerOpened] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   return (
     <Box display="flex" mih="100vh" bg="gray.0">
@@ -22,6 +22,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           size="260px"
           padding="md"
           zIndex={1000}
+          title="Dashboard Menu"
+          scrollAreaComponent={ScrollArea.Autosize}
         >
           <MainSidebar />
         </Drawer>
@@ -55,7 +57,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         {/* Content Area */}
         <Box
           component="main"
-          p={isMobile ? "md" : "xl"}
+          p={isMobile ? "md" : "lg"}
           style={{
             flex: 1,
             overflowY: "auto",

@@ -14,6 +14,11 @@ export interface DataTableProps<T> {
   onDelete?: (item: T) => void;
   onView?: (item: T) => void;
   showActions?: boolean;
+  /**
+   * Custom action buttons for each row
+   * (item) => React.ReactNode
+   */
+  actions?: (item: T) => React.ReactNode;
 }
 
 export function DataTable<T extends { id: string }>({
@@ -23,6 +28,7 @@ export function DataTable<T extends { id: string }>({
   onDelete,
   onView,
   showActions = true,
+  actions,
 }: DataTableProps<T>) {
   const rows = data.map((item, index) => (
     <Table.Tr key={item.id}>
@@ -50,7 +56,7 @@ export function DataTable<T extends { id: string }>({
             {onEdit && (
               <ActionIcon
                 variant="subtle"
-                color="yellow"
+                color="blue"
                 onClick={() => onEdit(item)}
                 aria-label="Edit"
               >
@@ -67,6 +73,7 @@ export function DataTable<T extends { id: string }>({
                 <IconTrash style={{ width: rem(16), height: rem(16) }} />
               </ActionIcon>
             )}
+            {actions && actions(item)}
           </Group>
         </Table.Td>
       )}

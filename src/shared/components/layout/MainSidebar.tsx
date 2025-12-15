@@ -1,66 +1,180 @@
 import { NavLink, Stack, Text, Group, Box } from "@mantine/core";
-import {
-  IconLayoutDashboard,
-  IconChartBar,
-  IconBulb,
-  IconBell,
-  IconUsers,
-  IconShoppingBag,
-  IconTicket,
-  IconPlug,
-  IconMessage,
-  IconSettings,
-  IconHelp,
-  IconLogout,
-} from "@tabler/icons-react";
+import { IconLogout, IconChevronDown } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useAuthStore } from "@/modules/auth/store/auth";
+import { useState } from "react";
+import { getIcon } from "@/shared/utils/iconMapping";
 
-const menuSections = [
+interface MenuItem {
+  icon: string; // Icon name as string (e.g., "IconDashboard") - stored in database
+  label: string;
+  href?: string;
+  badge?: string;
+  children?: MenuItem[];
+}
+
+const menuItems: MenuItem[] = [
   {
-    label: "Menu",
-    items: [
-      { icon: IconLayoutDashboard, label: "Dashboard", href: "/dashboard" },
+    icon: "IconLayoutDashboard",
+    label: "Dashboard",
+    href: "/dashboard",
+  },
+  {
+    icon: "IconSettings",
+    label: "Settings",
+    children: [
       {
-        icon: IconChartBar,
-        label: "Analytics",
-        href: "/analytics",
-        badge: "23",
+        icon: "IconUsers",
+        label: "User Management",
+        href: "/setting/user",
       },
-      { icon: IconBulb, label: "Insights", href: "/insights" },
-      { icon: IconBell, label: "Updates", href: "/updates" },
-      { icon: IconUsers, label: "Customers", href: "/customers" },
+      {
+        icon: "IconShieldLock",
+        label: "Role Management",
+        href: "/setting/role",
+      },
+      {
+        icon: "IconKey",
+        label: "Parameters",
+        href: "/setting/parameter",
+      },
+      {
+        icon: "IconMenu2",
+        label: "Menu Management",
+        href: "/setting/app-menu",
+      },
+      {
+        icon: "IconAppWindow",
+        label: "Module Management",
+        href: "/setting/app-module",
+      },
+      {
+        icon: "IconCategory",
+        label: "Category Management",
+        href: "/setting/app-category",
+      },
+      {
+        icon: "IconDatabase",
+        label: "Master Data",
+        href: "/setting/master-data",
+      },
     ],
   },
   {
-    label: "Products",
-    items: [
-      { icon: IconShoppingBag, label: "Store", href: "/store", badge: "32" },
-      { icon: IconTicket, label: "Discounts", href: "/discounts" },
-      { icon: IconPlug, label: "Integration", href: "/integration" },
-      { icon: IconMessage, label: "Feedback", href: "/feedback" },
-    ],
-  },
-  {
-    label: "General",
-    items: [
-      { icon: IconSettings, label: "Settings", href: "/setting/user" },
-      { icon: IconHelp, label: "Help Desk", href: "/help" },
-    ],
+    icon: "IconHelp",
+    label: "Help Desk",
+    href: "/help",
   },
 ];
 
 export function MainSidebar() {
   const router = useRouter();
   const logout = useAuthStore((state) => state.logout);
+  const [openedMenus, setOpenedMenus] = useState<string[]>([]);
 
   const handleLogout = () => {
     logout();
     router.push("/login");
   };
 
+  const toggleMenu = (label: string) => {
+    setOpenedMenus((prev) =>
+      prev.includes(label)
+        ? prev.filter((item) => item !== label)
+        : [...prev, label]
+    );
+  };
+
+  const isMenuActive = (item: MenuItem): boolean => {
+    if (item.href && router.pathname === item.href) return true;
+    if (item.children) {
+      return item.children.some((child) => isMenuActive(child));
+    }
+    return false;
+  };
+
+  const renderMenuItem = (item: MenuItem, depth: number = 0) => {
+    const Icon = getIcon(item.icon); // Convert string icon name to component
+    const hasChildren = item.children && item.children.length > 0;
+    const isOpened = openedMenus.includes(item.label);
+    const isActive = isMenuActive(item);
+
+    if (hasChildren) {
+      return (
+        <NavLink
+          key={item.label}
+          label={item.label}
+          leftSection={<Icon size={20} stroke={1.5} />}
+          rightSection={
+            item.badge ? (
+              <Box
+                bg="green.5"
+                c="white"
+                px="xs"
+                py={2}
+                fz={12}
+                fw={600}
+                style={{ borderRadius: 12 }}
+              >
+                {item.badge}
+              </Box>
+            ) : (
+              <IconChevronDown
+                size={16}
+                style={{
+                  transform: isOpened ? "rotate(180deg)" : "rotate(0deg)",
+                  transition: "transform 0.2s",
+                }}
+              />
+            )
+          }
+          opened={isOpened}
+          onChange={() => toggleMenu(item.label)}
+          active={isActive}
+        >
+          {item.children?.map((child) => renderMenuItem(child, depth + 1))}
+        </NavLink>
+      );
+    }
+
+    return (
+      <NavLink
+        key={item.href}
+        href={item.href}
+        label={item.label}
+        leftSection={<Icon size={20} stroke={1.5} />}
+        rightSection={
+          item.badge ? (
+            <Box
+              bg="green.5"
+              c="white"
+              px="xs"
+              py={2}
+              fz={12}
+              fw={600}
+              style={{ borderRadius: 12 }}
+            >
+              {item.badge}
+            </Box>
+          ) : null
+        }
+        active={router.pathname === item.href}
+        onClick={(e) => {
+          e.preventDefault();
+          if (item.href) {
+            router.push(item.href);
+          }
+        }}
+      />
+    );
+  };
+
   return (
     <Box
+      pt={{
+        base: 60,
+        md: 0,
+      }}
       style={{
         width: 260,
         height: "100vh",
@@ -74,17 +188,17 @@ export function MainSidebar() {
       }}
     >
       {/* Logo */}
-      <Group p="xl" gap="sm">
+      <Group p="xl" gap="sm" visibleFrom="md">
         <Box
+          w={40}
+          h={40}
+          display="flex"
+          c="white"
           style={{
-            width: 40,
-            height: 40,
             borderRadius: 12,
-            background: "linear-gradient(135deg, #40c057 0%, #2f9e44 100%)",
-            display: "flex",
+            background: "linear-gradient(135deg, #22b573 0%, #148551 100%)",
             alignItems: "center",
             justifyContent: "center",
-            color: "white",
             fontSize: 20,
             fontWeight: 700,
           }}
@@ -96,76 +210,9 @@ export function MainSidebar() {
         </Text>
       </Group>
 
-      {/* Menu Sections */}
-      <Stack gap="xl" px="md" py="sm" style={{ flex: 1, overflowY: "auto" }}>
-        {menuSections.map((section) => (
-          <div key={section.label}>
-            <Text size="xs" c="dimmed" fw={600} mb="xs" px="md">
-              {section.label}
-            </Text>
-            <Stack gap={4}>
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const isActive = router.pathname === item.href;
-                return (
-                  <NavLink
-                    key={item.href}
-                    href={item.href}
-                    label={item.label}
-                    leftSection={<Icon size={20} stroke={1.5} />}
-                    rightSection={
-                      item.badge ? (
-                        <Box
-                          style={{
-                            background: "#40c057",
-                            color: "white",
-                            borderRadius: 12,
-                            padding: "2px 8px",
-                            fontSize: 12,
-                            fontWeight: 600,
-                          }}
-                        >
-                          {item.badge}
-                        </Box>
-                      ) : null
-                    }
-                    active={isActive}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      router.push(item.href);
-                    }}
-                    styles={{
-                      root: {
-                        borderRadius: 12,
-                        fontWeight: 500,
-                        padding: "12px 16px",
-                        marginBottom: 4,
-                        transition: "all 0.2s ease",
-                        "&:hover": {
-                          background: isActive ? "#40c057" : "#f8f9fa",
-                        },
-                        "&[data-active]": {
-                          background: "#40c057",
-                          color: "white",
-                          fontWeight: 600,
-                          "&:hover": {
-                            background: "#37b24d",
-                          },
-                        },
-                      },
-                      label: {
-                        color: isActive ? "white" : "#495057",
-                      },
-                      section: {
-                        color: isActive ? "white" : "#868e96",
-                      },
-                    }}
-                  />
-                );
-              })}
-            </Stack>
-          </div>
-        ))}
+      {/* Menu Items */}
+      <Stack gap={4} px="md" py="sm" style={{ flex: 1, overflowY: "auto" }}>
+        {menuItems.map((item) => renderMenuItem(item))}
       </Stack>
 
       {/* Logout */}

@@ -1,16 +1,86 @@
-import { Skeleton, Stack, Box, Card, SimpleGrid, Group } from "@mantine/core";
+import {
+  Center,
+  Stack,
+  Loader,
+  Text,
+  Skeleton,
+  Card,
+  SimpleGrid,
+  Group,
+  Box,
+  type MantineStyleProp,
+} from "@mantine/core";
 
 interface LoadingStateProps {
-  type?: "table" | "card" | "form" | "detail" | "grid";
+  /**
+   * Type of loading state to display
+   * - "spinner": Simple centered spinner with optional message
+   * - "table": Skeleton loading for table
+   * - "card": Skeleton loading for card grid
+   * - "form": Skeleton loading for form
+   * @default "spinner"
+   */
+  type?: "spinner" | "table" | "card" | "form" | "detail" | "grid";
+  /**
+   * Height of the spinner container (only for type="spinner")
+   * @default 400
+   */
+  height?: number | string;
+  /**
+   * Size of the loader (only for type="spinner")
+   * @default "lg"
+   */
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
+  /**
+   * Optional loading message (only for type="spinner")
+   */
+  message?: string;
+  /**
+   * Number of rows/items to show in skeleton
+   * @default 5
+   */
   rows?: number;
+  /**
+   * Number of columns to show in skeleton
+   * @default 3
+   */
   columns?: number;
+  /**
+   * Custom styles for the container
+   */
+  style?: MantineStyleProp;
 }
 
+/**
+ * Minimalist loading state component
+ * Support berbagai tipe loading: spinner, table skeleton, card skeleton, form skeleton
+ */
 export function LoadingState({
-  type = "table",
+  type = "spinner",
+  height = 400,
+  size = "lg",
+  message,
   rows = 5,
   columns = 3,
+  style,
 }: LoadingStateProps) {
+  // Simple spinner loading
+  if (type === "spinner") {
+    return (
+      <Center h={height} style={style}>
+        <Stack align="center" gap="md">
+          <Loader size={size} color="green.5" />
+          {message && (
+            <Text size="sm" c="dimmed">
+              {message}
+            </Text>
+          )}
+        </Stack>
+      </Center>
+    );
+  }
+
+  // Table skeleton loading
   if (type === "table") {
     return (
       <Stack gap="md">

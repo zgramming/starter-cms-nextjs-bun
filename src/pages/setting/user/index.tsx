@@ -1,21 +1,23 @@
 import { useState } from "react";
+import Head from "next/head";
 import {
   Container,
   Title,
   Breadcrumbs,
   Anchor,
-  Pagination,
   Paper,
   Badge,
-  Loader,
-  Center,
-  Alert,
+  Select,
+  Group,
+  TextInput,
+  Button,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
-import { IconAlertCircle } from "@tabler/icons-react";
 import { AdminLayout } from "@/shared/components/layout/AdminLayout";
 import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
+import { LoadingState } from "@/shared/components/ui/LoadingState";
+import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { UserForm } from "@/modules/setting/user/components/UserForm";
 import {
   useUsers,
@@ -24,18 +26,30 @@ import {
   useDeleteUser,
 } from "@/modules/setting/user/hooks/useUsers";
 import type { User } from "@/types/user";
+import { TablePagination } from "@/shared/components/ui/TablePagination";
+import {
+  IconSearch,
+  IconPlus,
+  IconFileExport,
+  IconFileImport,
+} from "@tabler/icons-react";
 
 function UserManagementPage() {
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [openedAdd, setOpenedAdd] = useState(false);
   const [openedEdit, setOpenedEdit] = useState(false);
 
   const { data, isLoading, isError, error } = useUsers({
     page,
-    pageSize: 10,
+    pageSize,
     search,
+    status,
+    role,
   });
 
   const createMutation = useCreateUser();
@@ -85,34 +99,75 @@ function UserManagementPage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <AdminLayout>
-        <Container size="xl" py="md">
-          <Center h={400}>
-            <Loader size="lg" />
-          </Center>
-        </Container>
-      </AdminLayout>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <AdminLayout>
+  //       <Container size="xl" py="md">
+  //         <LoadingState message="Loading users..." />
+  //       </Container>
+  //     </AdminLayout>
+  //   );
+  // }
 
-  if (isError) {
-    return (
-      <AdminLayout>
-        <Container size="xl" py="md">
-          <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
-            {error?.message || "Failed to load users"}
-          </Alert>
-        </Container>
-      </AdminLayout>
-    );
-  }
+  // if (isError) {
+  //   return (
+  //     <AdminLayout>
+  //       <Container size="xl" py="md">
+  //         <ErrorState
+  //           title="Failed to Load Users"
+  //           message={
+  //             error?.message || "Unable to fetch user data. Please try again."
+  //           }
+  //         />
+  //       </Container>
+  //     </AdminLayout>
+  //   );
+  // }
 
-  const users = data?.data || [];
-  const totalPages = Math.ceil(
-    (data?.totalRecords || 0) / (data?.pageSize || 10)
-  );
+  // Dummy data for UI preview
+  const dummyUsers: User[] = [
+    {
+      id: "1",
+      name: "John Doe",
+      email: "john@example.com",
+      role: "admin",
+      status: "active",
+    },
+    {
+      id: "2",
+      name: "Jane Smith",
+      email: "jane@example.com",
+      role: "user",
+      status: "inactive",
+    },
+    {
+      id: "3",
+      name: "Michael Brown",
+      email: "michael@example.com",
+      role: "user",
+      status: "active",
+    },
+    {
+      id: "4",
+      name: "Emily White",
+      email: "emily@example.com",
+      role: "moderator",
+      status: "inactive",
+    },
+    {
+      id: "5",
+      name: "David Green",
+      email: "david@example.com",
+      role: "admin",
+      status: "active",
+    },
+  ];
+
+  const users = data?.data && data.data.length > 0 ? data.data : dummyUsers;
+  const totalRecords =
+    data?.totalRecords && data.totalRecords > 0
+      ? data.totalRecords
+      : dummyUsers.length;
 
   const columns: Column<User>[] = [
     {
@@ -142,56 +197,130 @@ function UserManagementPage() {
   ];
 
   return (
-    <AdminLayout>
-      <Container size="xl" py="md">
-        <Breadcrumbs mb="md">
-          {breadcrumbs.map((item, index) => (
-            <Anchor href={item.href} key={index}>
-              {item.title}
-            </Anchor>
-          ))}
-        </Breadcrumbs>
+    <>
+      <Head>
+        <title>User Management | Admin</title>
+      </Head>
+      <AdminLayout>
+        <Container size="xl" py="md">
+          <Breadcrumbs mb="md">
+            {breadcrumbs.map((item, index) => (
+              <Anchor href={item.href} key={index}>
+                {item.title}
+              </Anchor>
+            ))}
+          </Breadcrumbs>
 
-        <Title order={2} mb="lg">
-          User Management
-        </Title>
+          <Title order={2} mb="lg">
+            User Management
+          </Title>
 
-        <Paper shadow="xs" p="md">
-          <TableToolbar
-            searchValue={search}
-            onSearchChange={setSearch}
-            onAdd={handleAdd}
-            showAdd={true}
+          <Paper shadow="xs" p="md">
+            <TableToolbar
+              leftSide={
+                <>
+                  <TextInput
+                    placeholder="Cari..."
+                    value={search}
+                    onChange={(e) => setSearch(e.currentTarget.value)}
+                    leftSection={
+                      <IconSearch style={{ width: 16, height: 16 }} />
+                    }
+                    size="xs"
+                    w={180}
+                  />
+                  <Select
+                    data={[
+                      { value: "active", label: "Active" },
+                      { value: "inactive", label: "Inactive" },
+                    ]}
+                    value={status}
+                    onChange={setStatus}
+                    placeholder="Status"
+                    clearable
+                    size="xs"
+                    w={110}
+                  />
+                  <Select
+                    data={[
+                      { value: "admin", label: "Admin" },
+                      { value: "user", label: "User" },
+                      { value: "guest", label: "Guest" },
+                    ]}
+                    value={role}
+                    onChange={setRole}
+                    placeholder="Role"
+                    clearable
+                    size="xs"
+                    w={110}
+                  />
+                </>
+              }
+              rightSide={
+                <>
+                  <Button
+                    variant="default"
+                    leftSection={
+                      <IconFileImport style={{ width: 16, height: 16 }} />
+                    }
+                    size="xs"
+                    // onClick={handleImport}
+                  >
+                    Import
+                  </Button>
+                  <Button
+                    variant="default"
+                    leftSection={
+                      <IconFileExport style={{ width: 16, height: 16 }} />
+                    }
+                    size="xs"
+                    // onClick={handleExport}
+                  >
+                    Export
+                  </Button>
+                  <Button
+                    leftSection={<IconPlus style={{ width: 16, height: 16 }} />}
+                    size="xs"
+                    onClick={handleAdd}
+                  >
+                    Tambah
+                  </Button>
+                </>
+              }
+            />
+            <DataTable
+              columns={columns}
+              data={users}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+            <TablePagination
+              page={page}
+              total={totalRecords}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1); // Reset to first page if page size changes
+              }}
+              loading={isLoading}
+            />
+          </Paper>
+
+          <UserForm
+            opened={openedAdd}
+            onClose={() => setOpenedAdd(false)}
+            onSubmit={handleSubmitAdd}
           />
 
-          <DataTable
-            columns={columns}
-            data={users}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
+          <UserForm
+            opened={openedEdit}
+            onClose={() => setOpenedEdit(false)}
+            onSubmit={handleSubmitEdit}
           />
-
-          <Pagination
-            total={totalPages}
-            value={page}
-            onChange={setPage}
-            mt="md"
-          />
-        </Paper>
-
-        <UserForm
-          opened={openedAdd}
-          onClose={() => setOpenedAdd(false)}
-          onSubmit={handleSubmitAdd}
-        />
-
-        <UserForm
-          opened={openedEdit}
-          onClose={() => setOpenedEdit(false)}
-          onSubmit={handleSubmitEdit}
-        />
-      </Container>
-    </AdminLayout>
+        </Container>
+      </AdminLayout>
+    </>
   );
 }
 

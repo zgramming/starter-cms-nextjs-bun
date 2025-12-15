@@ -1,5 +1,4 @@
 import {
-  Paper,
   Title,
   Text,
   TextInput,
@@ -8,8 +7,6 @@ import {
   Box,
   Anchor,
   rem,
-  BackgroundImage,
-  Center,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
