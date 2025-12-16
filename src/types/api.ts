@@ -1,6 +1,6 @@
 // API Types - Request & Response Payloads
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 

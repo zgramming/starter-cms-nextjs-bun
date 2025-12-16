@@ -5,34 +5,60 @@ import {
   PasswordInput,
   Button,
   Box,
-  Anchor,
   rem,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { IconLogin } from "@tabler/icons-react";
+import { useState } from "react";
+import { authApi } from "@/modules/auth/api/auth";
+import { useAuthStore } from "@/modules/auth/store/auth";
 
 export default function LoginPage() {
   const router = useRouter();
 
+  const setAuth = useAuthStore((state) => state.setAuth);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm({
     initialValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Email tidak valid"),
+      username: (value) =>
+        value.length < 3 ? "Username minimal 3 karakter" : null,
       password: (value) =>
         value.length < 6 ? "Password minimal 6 karakter" : null,
     },
   });
 
-  const handleSubmit = (values: typeof form.values) => {
-    // Implement login logic here
-    console.log("Login:", values);
+  const handleSubmit = async (values: typeof form.values) => {
+    try {
+      const res = await authApi.login(values);
+    } catch (error) {}
 
-    // Simulate successful login and redirect to dashboard
-    router.push("/dashboard");
+    // setLoading(true);
+    // setError(null);
+    // try {
+    //   // if (res.data && res.data.data) {
+    //   //   const { user, token, refreshToken } = res.data.data;
+    //   //   setAuth(user, token, refreshToken);
+    //   //   router.push("/dashboard");
+    //   // } else {
+    //   //   setError("Login gagal: Data tidak valid");
+    //   // }
+    // } catch (err: unknown) {
+    //   console.error("Login error:", err);
+    //   if (err instanceof Error) {
+    //     setError(`Login gagal: ${err.message}`);
+    //   }
+
+    //   setError("Login gagal: Terjadi kesalahan tak terduga");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -187,9 +213,14 @@ export default function LoginPage() {
           </Text>
 
           <form onSubmit={form.onSubmit(handleSubmit)}>
+            {error && (
+              <Text color="red" size="sm" mb="sm">
+                {error}
+              </Text>
+            )}
             <TextInput
-              label="Email Address"
-              placeholder="example@email.com"
+              label="Username"
+              placeholder="your username"
               size="md"
               required
               styles={{
@@ -209,7 +240,7 @@ export default function LoginPage() {
                   },
                 },
               }}
-              {...form.getInputProps("email")}
+              {...form.getInputProps("username")}
             />
 
             <PasswordInput
@@ -239,34 +270,26 @@ export default function LoginPage() {
             />
 
             <Box ta="right" mt="sm">
-              <Anchor
-                component="button"
-                type="button"
-                size="sm"
-                c="green.5"
-                fw={500}
+              <Button
+                fullWidth
+                size="md"
+                mt="xl"
+                type="submit"
+                h={rem(48)}
+                fz={rem(15)}
+                fw={600}
+                leftSection={<IconLogin size={20} />}
+                loading={loading}
+                style={{
+                  background:
+                    "linear-gradient(135deg, #22b573 0%, #148551 100%)",
+                  borderRadius: rem(8),
+                  boxShadow: "0 4px 12px rgba(34, 181, 115, 0.3)",
+                }}
               >
-                Forgot password?
-              </Anchor>
+                LOGIN
+              </Button>
             </Box>
-
-            <Button
-              fullWidth
-              size="md"
-              mt="xl"
-              type="submit"
-              h={rem(48)}
-              fz={rem(15)}
-              fw={600}
-              leftSection={<IconLogin size={20} />}
-              style={{
-                background: "linear-gradient(135deg, #22b573 0%, #148551 100%)",
-                borderRadius: rem(8),
-                boxShadow: "0 4px 12px rgba(34, 181, 115, 0.3)",
-              }}
-            >
-              LOGIN
-            </Button>
           </form>
         </Box>
       </Box>

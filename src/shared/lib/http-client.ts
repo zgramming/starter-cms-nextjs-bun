@@ -53,11 +53,11 @@ httpClient.interceptors.response.use(
 
       try {
         // Try to refresh token (refresh-token cookie is sent automatically)
-        await axios.post(
-          `${env.apiBaseUrl}/auth/refresh`,
-          {},
-          { withCredentials: true } // Send cookies
-        );
+        // await axios.post(
+        //   `${env.apiBaseUrl}/auth/refresh`,
+        //   {},
+        //   { withCredentials: true } // Send cookies
+        // );
 
         // Backend should set new auth-token cookie in response
         // No need to manually save token - browser handles it

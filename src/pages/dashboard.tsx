@@ -198,32 +198,20 @@ export default function DashboardPage() {
               pos="relative"
               style={{
                 borderRadius: "var(--mantine-radius-lg)",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
-                border: "3px solid var(--mantine-color-green-5)",
+                border: "2px solid var(--mantine-color-green-5)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                 overflow: "hidden",
               }}
             >
-              {/* Green accent gradient */}
-              <Box
-                pos="absolute"
-                top={0}
-                left={0}
-                right={0}
-                h={6}
-                style={{
-                  background:
-                    "linear-gradient(90deg, #4bc38b 0%, #22b573 50%, #1a9d62 100%)",
-                }}
-              />
               <Group gap="md" mb="xs">
-                <ThemeIcon size={48} radius="md" variant="light" color="green">
-                  <IconSparkles size={28} />
+                <ThemeIcon size={40} radius="md" variant="light" color="green">
+                  <IconSparkles size={22} />
                 </ThemeIcon>
                 <Box>
-                  <Title order={1} size="2rem" fw={700}>
+                  <Title order={1} size="1.5rem" fw={700} mb={2}>
                     Dashboard
                   </Title>
-                  <Text c="dimmed" size="lg">
+                  <Text c="dimmed" size="md">
                     Welcome back! Select a module to get started
                   </Text>
                 </Box>
@@ -234,121 +222,71 @@ export default function DashboardPage() {
             {mockCategories.map((category) => (
               <Box key={category.id}>
                 {/* Category Header */}
-                <Box
-                  mb="md"
-                  p="md"
-                  bg="white"
-                  style={{
-                    borderRadius: "var(--mantine-radius-md)",
-                    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-                    borderLeft: "4px solid var(--mantine-color-green-5)",
-                  }}
-                >
-                  <Group justify="space-between" align="center">
-                    <Box>
-                      <Title order={2} size="1.5rem" fw={700} c="green.8">
-                        {category.name}
-                      </Title>
-                      <Text size="sm" c="dimmed">
-                        {category.description}
-                      </Text>
-                    </Box>
-                    <Badge
-                      size="lg"
-                      variant="gradient"
-                      gradient={{ from: "teal", to: "green" }}
-                    >
-                      {category.modules.length} Module
-                      {category.modules.length > 1 ? "s" : ""}
-                    </Badge>
-                  </Group>
-                </Box>
+                <Group justify="space-between" align="center" mb="md">
+                  <Title order={2} size="1.1rem" fw={700} c="green.8">
+                    {category.name}
+                  </Title>
+                  <Badge size="md" variant="light" color="green">
+                    {category.modules.length} Module
+                    {category.modules.length > 1 ? "s" : ""}
+                  </Badge>
+                </Group>
 
                 {/* Modules Grid */}
                 <Grid gutter="md">
                   {category.modules.map((module) => {
                     const Icon = moduleIcons[module.id] || IconSettings;
                     const color = moduleColors[module.id] || "gray";
-
                     return (
                       <Grid.Col
                         key={module.id}
                         span={{ base: 12, sm: 6, md: 4, lg: 3 }}
                       >
                         <Card
-                          shadow="sm"
-                          padding="xl"
-                          radius="lg"
+                          padding="lg"
+                          radius="md"
                           withBorder
-                          pos="relative"
-                          h="100%"
+                          bg="white"
                           style={{
                             cursor: "pointer",
-                            overflow: "hidden",
+                            borderColor: `var(--mantine-color-${color}-5)`,
+                            transition:
+                              "box-shadow .2s, border-color .2s, transform .2s",
+                            boxShadow: "0 2px 8px rgba(34,181,115,0.06)",
                           }}
                           onClick={() => handleModuleClick(module)}
                           className="module-card"
                         >
-                          {/* Gradient Top Border */}
-                          <Box
-                            className="card-gradient"
-                            pos="absolute"
-                            top={0}
-                            left={0}
-                            right={0}
-                            h={4}
-                            style={{
-                              background: `linear-gradient(90deg, var(--mantine-color-${color}-6), var(--mantine-color-${color}-4))`,
-                            }}
-                          />
-
-                          <Stack gap="md">
-                            <Group justify="space-between" align="flex-start">
-                              <ThemeIcon
-                                size={56}
-                                radius="md"
-                                variant="light"
-                                color={color}
-                                style={{
-                                  boxShadow: `0 4px 12px rgba(0,0,0,0.08)`,
-                                }}
-                              >
-                                <Icon size={32} />
-                              </ThemeIcon>
-                              <Box className="arrow-icon">
-                                <IconArrowRight size={20} color="#adb5bd" />
-                              </Box>
-                            </Group>
-
-                            <Box>
-                              <Text fw={700} size="xl" mb={4} c="gray.9">
-                                {module.name}
-                              </Text>
-                              <Text size="sm" c="dimmed" lineClamp={2} mih={40}>
-                                {module.description}
-                              </Text>
-                            </Box>
-
-                            <Group gap="xs" mt="auto">
-                              <Badge
-                                variant="light"
-                                color={color}
-                                size="sm"
-                                leftSection={
-                                  <Box
-                                    w={6}
-                                    h={6}
-                                    style={{
-                                      borderRadius: "50%",
-                                      background: `var(--mantine-color-${color}-6)`,
-                                    }}
-                                  />
-                                }
-                              >
-                                {module.menus?.length || 0} Menu
-                                {(module.menus?.length || 0) > 1 ? "s" : ""}
-                              </Badge>
-                            </Group>
+                          <Stack gap="sm" align="center">
+                            <ThemeIcon
+                              size={38}
+                              radius="md"
+                              variant="light"
+                              color={color}
+                              mb={4}
+                            >
+                              <Icon size={22} />
+                            </ThemeIcon>
+                            <Text fw={600} size="md" c="gray.9" ta="center">
+                              {module.name}
+                            </Text>
+                            <Text
+                              size="xs"
+                              c="dimmed"
+                              ta="center"
+                              lineClamp={2}
+                            >
+                              {module.description}
+                            </Text>
+                            <Badge
+                              variant="light"
+                              color={color}
+                              size="xs"
+                              mt={4}
+                            >
+                              {module.menus?.length || 0} Menu
+                              {(module.menus?.length || 0) > 1 ? "s" : ""}
+                            </Badge>
                           </Stack>
                         </Card>
                       </Grid.Col>
@@ -359,63 +297,14 @@ export default function DashboardPage() {
             ))}
           </Stack>
         </Container>
-
         <style jsx global>{`
           .module-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateY(0);
+            transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
           }
-
           .module-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(34, 181, 115, 0.15) !important;
+            box-shadow: 0 8px 24px rgba(34, 181, 115, 0.1) !important;
             border-color: var(--mantine-color-green-5) !important;
-          }
-
-          .module-card:hover .card-gradient {
-            height: 6px;
-          }
-
-          .module-card .arrow-icon {
-            transition: all 0.3s ease;
-            opacity: 0.5;
-          }
-
-          .module-card:hover .arrow-icon {
-            opacity: 1;
-            transform: translateX(4px);
-          }
-
-          .card-gradient {
-            transition: height 0.3s ease;
-          }
-
-          @keyframes fadeInUp {
-            from {
-              opacity: 0;
-              transform: translateY(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-
-          .module-card {
-            animation: fadeInUp 0.5s ease backwards;
-          }
-
-          .module-card:nth-child(1) {
-            animation-delay: 0.1s;
-          }
-          .module-card:nth-child(2) {
-            animation-delay: 0.2s;
-          }
-          .module-card:nth-child(3) {
-            animation-delay: 0.3s;
-          }
-          .module-card:nth-child(4) {
-            animation-delay: 0.4s;
+            transform: translateY(-4px) scale(1.02);
           }
         `}</style>
       </Box>

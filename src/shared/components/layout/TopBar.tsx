@@ -18,6 +18,7 @@ import {
 import { useAuthStore } from "@/modules/auth/store/auth";
 import { useRouter } from "next/router";
 import { ReactNode } from "react";
+import { authApi } from "@/modules/auth/api/auth";
 
 interface TopBarProps {
   burger?: ReactNode;
@@ -28,7 +29,12 @@ export function TopBar({ burger }: TopBarProps) {
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch (e) {
+      // ignore error, just clear local state
+    }
     logout();
     router.push("/login");
   };

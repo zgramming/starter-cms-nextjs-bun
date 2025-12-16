@@ -7,10 +7,14 @@ import {
   Pagination,
   Paper,
   Badge,
+  TextInput,
+  Button,
 } from "@mantine/core";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
 import { AdminLayout } from "@/shared/components/layout/AdminLayout";
 import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
+import { TablePagination } from "@/shared/components/ui/TablePagination";
 
 interface ApplicationMenu {
   id: string;
@@ -43,6 +47,8 @@ const mockMenus: ApplicationMenu[] = [
 function AppMenuPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const totalRecords = mockMenus.length;
 
   const columns: Column<ApplicationMenu>[] = [
     { key: "name", label: "Menu Name", render: (m) => m.name },
@@ -76,10 +82,25 @@ function AppMenuPage() {
         </Title>
         <Paper shadow="xs" p="md">
           <TableToolbar
-            searchValue={search}
-            onSearchChange={setSearch}
-            onAdd={() => {}}
-            showAdd
+            leftSide={
+              <TextInput
+                placeholder="Cari..."
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                leftSection={<IconSearch style={{ width: 16, height: 16 }} />}
+                size="xs"
+                w={180}
+              />
+            }
+            rightSide={
+              <Button
+                leftSection={<IconPlus style={{ width: 16, height: 16 }} />}
+                size="xs"
+                onClick={() => {}}
+              >
+                Tambah
+              </Button>
+            }
           />
           <DataTable
             columns={columns}
@@ -87,7 +108,17 @@ function AppMenuPage() {
             onEdit={(m) => console.log(m)}
             onDelete={(m) => console.log(m)}
           />
-          <Pagination total={1} value={page} onChange={setPage} mt="md" />
+          <TablePagination
+            page={page}
+            total={totalRecords}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+            loading={false}
+          />
         </Paper>
       </Container>
     </AdminLayout>

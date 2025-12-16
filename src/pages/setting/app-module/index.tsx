@@ -7,10 +7,14 @@ import {
   Pagination,
   Paper,
   Badge,
+  TextInput,
+  Button,
 } from "@mantine/core";
 import { AdminLayout } from "@/shared/components/layout/AdminLayout";
 import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
+import { TablePagination } from "@/shared/components/ui/TablePagination";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
 
 interface ApplicationModule {
   id: string;
@@ -35,6 +39,8 @@ const mockModules: ApplicationModule[] = [
 function AppModulePage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const totalRecords = mockModules.length;
 
   const columns: Column<ApplicationModule>[] = [
     { key: "name", label: "Module Name", render: (m) => m.name },
@@ -68,18 +74,38 @@ function AppModulePage() {
         </Title>
         <Paper shadow="xs" p="md">
           <TableToolbar
-            searchValue={search}
-            onSearchChange={setSearch}
-            onAdd={() => {}}
-            showAdd
+            leftSide={
+              <TextInput
+                placeholder="Cari..."
+                value={search}
+                onChange={(e) => setSearch(e.currentTarget.value)}
+                leftSection={<IconSearch style={{ width: 16, height: 16 }} />}
+                size="xs"
+                w={180}
+              />
+            }
+            rightSide={
+              <Button
+                leftSection={<IconPlus style={{ width: 16, height: 16 }} />}
+                size="xs"
+                onClick={() => {}}
+              >
+                Tambah
+              </Button>
+            }
           />
-          <DataTable
-            columns={columns}
-            data={mockModules}
-            onEdit={(m) => console.log(m)}
-            onDelete={(m) => console.log(m)}
+          <DataTable columns={columns} data={mockModules} />
+          <TablePagination
+            page={page}
+            total={totalRecords}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+            loading={false}
           />
-          <Pagination total={1} value={page} onChange={setPage} mt="md" />
         </Paper>
       </Container>
     </AdminLayout>
