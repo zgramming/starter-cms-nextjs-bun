@@ -8,7 +8,6 @@ import {
   Paper,
   Badge,
   Select,
-  Group,
   TextInput,
   Button,
 } from "@mantine/core";
@@ -16,8 +15,6 @@ import { modals } from "@mantine/modals";
 import { AdminLayout } from "@/shared/components/layout/AdminLayout";
 import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
-import { LoadingState } from "@/shared/components/ui/LoadingState";
-import { ErrorState } from "@/shared/components/ui/ErrorState";
 import { UserForm } from "@/modules/users/components/UserForm";
 import {
   useUsers,
@@ -44,12 +41,10 @@ function UserManagementPage() {
   const [openedAdd, setOpenedAdd] = useState(false);
   const [openedEdit, setOpenedEdit] = useState(false);
 
-  const { data, isLoading, isError, error } = useUsers({
-    page,
+  const { data, isLoading } = useUsers({
+    pageNumber: page,
     pageSize,
-    search,
-    status,
-    role,
+    searchTerm: search,
   });
 
   const createMutation = useCreateUser();

@@ -19,7 +19,7 @@ class CategoryService extends BaseRepository<Category> {
   }
 
   async getTree() {
-    return this.get(`/${this.resource}/tree`);
+    return this.get<Category[]>(`/${this.resource}/tree`);
   }
 }
 

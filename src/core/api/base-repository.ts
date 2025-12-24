@@ -1,10 +1,11 @@
 import { api } from "@/shared/lib/http-client";
 import type { PaginatedResponse } from "@/types/api";
+import type { BaseQueryParams } from "@/core/types/query-params";
 
 export class BaseRepository<T> {
   constructor(protected readonly resource: string) {}
 
-  async getAll(params?: Record<string, unknown>) {
+  async getAll(params?: BaseQueryParams) {
     return api.get<PaginatedResponse<T>>(`/${this.resource}`, {
       params,
     });

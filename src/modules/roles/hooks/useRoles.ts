@@ -1,33 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { createCrudHooks } from "@/shared/hooks/useCrudApi";
 import { roleService } from "../services/role.service";
-import type { Role } from "@/types/user";
-import type { PaginatedResponse, ApiError } from "@/types/api";
 
-interface UseRolesParams extends Record<string, unknown> {
-  pageNumber?: number;
-  pageSize?: number;
-  searchTerm?: string;
-}
+const baseCrudHooks = createCrudHooks("roles", roleService);
 
-export function useRoles(params: UseRolesParams = {}) {
-  return useQuery<PaginatedResponse<Role>, ApiError>({
-    queryKey: ["roles", params],
-    queryFn: async () => {
-      const response = await roleService.getAll(params);
-      return response.data.data;
-    },
-  });
-}
+export const useRoles = baseCrudHooks.useList;
+export const useRole = baseCrudHooks.useDetail;
+export const useCreateRole = baseCrudHooks.useCreate;
+export const useUpdateRole = baseCrudHooks.useUpdate;
+export const useDeleteRole = baseCrudHooks.useDelete;
+export const useBulkDeleteRoles = baseCrudHooks.useBulkDelete;
 
-export function useRole(id: string) {
-  return useQuery<Role, ApiError>({
-    queryKey: ["roles", id],
-    queryFn: async () => {
-      const response = await roleService.getById(id);
-      return response.data.data;
-    },
-    enabled: !!id,
-  });
-}
-
-export * from "./useRoleMutations";
+export const roleHooks = {
+  ...baseCrudHooks,
+};

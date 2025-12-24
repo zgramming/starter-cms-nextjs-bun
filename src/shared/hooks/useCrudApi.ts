@@ -1,14 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ApiError } from "@/types/api";
-import { notifications } from "@mantine/notifications";
 import { createQueryKeys } from "./queryKeys";
 import { BaseRepository } from "@/core/api/base-repository";
+import type { BaseQueryParams } from "@/core/types/query-params";
+import { useMutationCallbacks } from "@/shared/utils/mutation-helpers";
 
 export function createCrudHooks<T>(resource: string, api: BaseRepository<T>) {
   const keys = createQueryKeys(resource);
 
   return {
-    useList: (params?: Record<string, unknown>) => {
+    useList: (params?: BaseQueryParams) => {
       return useQuery({
         queryKey: keys.list(params),
         queryFn: async () => {
@@ -29,99 +29,43 @@ export function createCrudHooks<T>(resource: string, api: BaseRepository<T>) {
       });
     },
 
-    // Create new item
     useCreate: () => {
-      const queryClient = useQueryClient();
+      const callbacks = useMutationCallbacks(resource, "created");
       return useMutation({
         mutationFn: (data: Partial<T>) => api.create(data),
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: keys.lists() });
-          notifications.show({
-            title: "Success",
-            message: `${resource} created successfully`,
-            color: "green",
-          });
-        },
-        onError: (error: ApiError) => {
-          notifications.show({
-            title: "Error",
-            message: error.message || `Failed to create ${resource}`,
-            color: "red",
-          });
-        },
+        ...callbacks,
       });
     },
 
-    // Update existing item
     useUpdate: () => {
       const queryClient = useQueryClient();
+      const callbacks = useMutationCallbacks(resource, "updated");
       return useMutation({
         mutationFn: ({ id, data }: { id: string; data: Partial<T> }) =>
           api.update(id, data),
         onSuccess: (_, variables) => {
-          queryClient.invalidateQueries({ queryKey: keys.lists() });
           queryClient.invalidateQueries({
             queryKey: keys.detail(variables.id),
           });
-          notifications.show({
-            title: "Success",
-            message: `${resource} updated successfully`,
-            color: "green",
-          });
+          callbacks.onSuccess();
         },
-        onError: (error: ApiError) => {
-          notifications.show({
-            title: "Error",
-            message: error.message || `Failed to update ${resource}`,
-            color: "red",
-          });
-        },
+        onError: callbacks.onError,
       });
     },
 
-    // Delete item
     useDelete: () => {
-      const queryClient = useQueryClient();
+      const callbacks = useMutationCallbacks(resource, "deleted");
       return useMutation({
         mutationFn: (id: string) => api.delete(id),
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: keys.lists() });
-          notifications.show({
-            title: "Success",
-            message: `${resource} deleted successfully`,
-            color: "green",
-          });
-        },
-        onError: (error: ApiError) => {
-          notifications.show({
-            title: "Error",
-            message: error.message || `Failed to delete ${resource}`,
-            color: "red",
-          });
-        },
+        ...callbacks,
       });
     },
 
-    // Bulk delete items
     useBulkDelete: () => {
-      const queryClient = useQueryClient();
+      const callbacks = useMutationCallbacks(resource, "deleted");
       return useMutation({
         mutationFn: (ids: string[]) => api.bulkDelete(ids),
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: keys.lists() });
-          notifications.show({
-            title: "Success",
-            message: `${resource} deleted successfully`,
-            color: "green",
-          });
-        },
-        onError: (error: ApiError) => {
-          notifications.show({
-            title: "Error",
-            message: error.message || `Failed to delete ${resource}`,
-            color: "red",
-          });
-        },
+        ...callbacks,
       });
     },
   };

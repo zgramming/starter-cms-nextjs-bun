@@ -1,33 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { createCrudHooks } from "@/shared/hooks/useCrudApi";
 import { userService } from "../services/user.service";
-import type { User } from "@/types/user";
-import type { PaginatedResponse, ApiError } from "@/types/api";
 
-interface UseUsersParams extends Record<string, unknown> {
-  pageNumber?: number;
-  pageSize?: number;
-  searchTerm?: string;
-}
+const baseCrudHooks = createCrudHooks("users", userService);
 
-export function useUsers(params: UseUsersParams = {}) {
-  return useQuery<PaginatedResponse<User>, ApiError>({
-    queryKey: ["users", params],
-    queryFn: async () => {
-      const response = await userService.getAll(params);
-      return response.data.data;
-    },
-  });
-}
+export const useUsers = baseCrudHooks.useList;
+export const useUser = baseCrudHooks.useDetail;
+export const useCreateUser = baseCrudHooks.useCreate;
+export const useUpdateUser = baseCrudHooks.useUpdate;
+export const useDeleteUser = baseCrudHooks.useDelete;
+export const useBulkDeleteUsers = baseCrudHooks.useBulkDelete;
 
-export function useUser(id: string) {
-  return useQuery<User, ApiError>({
-    queryKey: ["users", id],
-    queryFn: async () => {
-      const response = await userService.getById(id);
-      return response.data.data;
-    },
-    enabled: !!id,
-  });
-}
-
-export * from "./useUserMutations";
+export const userHooks = {
+  ...baseCrudHooks,
+};

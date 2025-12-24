@@ -25,7 +25,7 @@ class MenuService extends BaseRepository<Menu> {
   }
 
   async getTree() {
-    return this.get(`/${this.resource}/tree`);
+    return this.get<Menu[]>(`/${this.resource}/tree`);
   }
 }
 
