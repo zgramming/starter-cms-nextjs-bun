@@ -91,7 +91,7 @@ function UserManagementPage() {
   const handleSubmitEdit = async (values: Partial<User>) => {
     if (selectedUser) {
       updateMutation.mutate(
-        { ...selectedUser, ...values },
+        { id: selectedUser.id, data: values },
         {
           onSuccess: () => setOpenedEdit(false),
         }

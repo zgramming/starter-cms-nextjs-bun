@@ -1,15 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { roleService } from "../services/role.service";
 import type { Role } from "@/types/user";
+import type { PaginatedResponse, ApiError } from "@/types/api";
 
 interface UseRolesParams extends Record<string, unknown> {
-  page?: number;
+  pageNumber?: number;
   pageSize?: number;
-  search?: string;
+  searchTerm?: string;
 }
 
 export function useRoles(params: UseRolesParams = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Role>, ApiError>({
     queryKey: ["roles", params],
     queryFn: async () => {
       const response = await roleService.getAll(params);
@@ -18,43 +19,15 @@ export function useRoles(params: UseRolesParams = {}) {
   });
 }
 
-export function useCreateRole() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (role: Omit<Role, "id">) => {
-      const response = await roleService.create(role);
+export function useRole(id: string) {
+  return useQuery<Role, ApiError>({
+    queryKey: ["roles", id],
+    queryFn: async () => {
+      const response = await roleService.getById(id);
       return response.data.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
+    enabled: !!id,
   });
 }
 
-export function useUpdateRole() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (role: Role) => {
-      const response = await roleService.update(role.id, role);
-      return response.data.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-}
-
-export function useDeleteRole() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await roleService.delete(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-    },
-  });
-}
+export * from "./useRoleMutations";

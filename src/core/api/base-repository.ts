@@ -39,4 +39,20 @@ export class BaseRepository<T> {
     formData.append("file", file);
     return api.upload(`/${this.resource}/import`, formData);
   }
+
+  protected async get<R = T>(url: string) {
+    return api.get<R>(url);
+  }
+
+  protected async post<R = T>(url: string, data?: unknown) {
+    return api.post<R>(url, data);
+  }
+
+  protected async put<R = T>(url: string, data?: unknown) {
+    return api.put<R>(url, data);
+  }
+
+  protected async patch<R = T>(url: string, data?: unknown) {
+    return api.patch<R>(url, data);
+  }
 }

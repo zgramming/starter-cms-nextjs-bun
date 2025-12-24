@@ -1,15 +1,16 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { userService } from "../services/user.service";
 import type { User } from "@/types/user";
+import type { PaginatedResponse, ApiError } from "@/types/api";
 
 interface UseUsersParams extends Record<string, unknown> {
-  page?: number;
+  pageNumber?: number;
   pageSize?: number;
-  search?: string;
+  searchTerm?: string;
 }
 
 export function useUsers(params: UseUsersParams = {}) {
-  return useQuery({
+  return useQuery<PaginatedResponse<User>, ApiError>({
     queryKey: ["users", params],
     queryFn: async () => {
       const response = await userService.getAll(params);
@@ -18,43 +19,15 @@ export function useUsers(params: UseUsersParams = {}) {
   });
 }
 
-export function useCreateUser() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (user: Omit<User, "id">) => {
-      const response = await userService.create(user);
+export function useUser(id: string) {
+  return useQuery<User, ApiError>({
+    queryKey: ["users", id],
+    queryFn: async () => {
+      const response = await userService.getById(id);
       return response.data.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
+    enabled: !!id,
   });
 }
 
-export function useUpdateUser() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (user: User) => {
-      const response = await userService.update(user.id, user);
-      return response.data.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-  });
-}
-
-export function useDeleteUser() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (id: string) => {
-      await userService.delete(id);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-  });
-}
+export * from "./useUserMutations";
