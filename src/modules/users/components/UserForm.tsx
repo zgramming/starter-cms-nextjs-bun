@@ -1,6 +1,10 @@
 import { Modal, TextInput, Select, Button, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { User } from "@/types/user";
+import {
+  validationRules,
+  composeValidators,
+} from "@/shared/utils/validation-rules";
 
 interface UserFormProps {
   opened: boolean;
@@ -25,9 +29,15 @@ export function UserForm({
       status: user?.status || ("active" as User["status"]),
     },
     validate: {
-      name: (value) => (value.trim().length > 0 ? null : "Name is required"),
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : "Invalid email"),
-      role: (value) => (value ? null : "Role is required"),
+      name: composeValidators(
+        validationRules.required("Name"),
+        validationRules.minLength(2)
+      ),
+      email: composeValidators(
+        validationRules.required("Email"),
+        validationRules.email
+      ),
+      role: validationRules.required("Role"),
     },
   });
 

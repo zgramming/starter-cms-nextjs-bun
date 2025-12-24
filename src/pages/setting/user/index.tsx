@@ -2,17 +2,16 @@ import { useState } from "react";
 import Head from "next/head";
 import {
   Container,
-  Title,
   Breadcrumbs,
   Anchor,
-  Paper,
   Badge,
   Select,
   TextInput,
-  Button,
+  Stack,
 } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { AdminLayout } from "@/shared/components/layout/AdminLayout";
+import { BaseCrudPage } from "@/shared/components/layout/BaseCrudPage";
 import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
 import { UserForm } from "@/modules/users/components/UserForm";
@@ -24,12 +23,12 @@ import {
 } from "@/modules/users/hooks/useUsers";
 import type { User } from "@/types/user";
 import { TablePagination } from "@/shared/components/ui/TablePagination";
+import { IconSearch } from "@tabler/icons-react";
 import {
-  IconSearch,
-  IconPlus,
-  IconFileExport,
-  IconFileImport,
-} from "@tabler/icons-react";
+  ButtonAdd,
+  ButtonImport,
+  ButtonExport,
+} from "@/shared/components/ui/ActionButtons";
 
 function UserManagementPage() {
   const [page, setPage] = useState(1);
@@ -41,7 +40,7 @@ function UserManagementPage() {
   const [openedAdd, setOpenedAdd] = useState(false);
   const [openedEdit, setOpenedEdit] = useState(false);
 
-  const { data, isLoading } = useUsers({
+  const { data, isLoading, isError, error, refetch } = useUsers({
     pageNumber: page,
     pageSize,
     searchTerm: search,
@@ -93,31 +92,6 @@ function UserManagementPage() {
       );
     }
   };
-
-  // if (isLoading) {
-  //   return (
-  //     <AdminLayout>
-  //       <Container size="xl" py="md">
-  //         <LoadingState message="Loading users..." />
-  //       </Container>
-  //     </AdminLayout>
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //     <AdminLayout>
-  //       <Container size="xl" py="md">
-  //         <ErrorState
-  //           title="Failed to Load Users"
-  //           message={
-  //             error?.message || "Unable to fetch user data. Please try again."
-  //           }
-  //         />
-  //       </Container>
-  //     </AdminLayout>
-  //   );
-  // }
 
   // Dummy data for UI preview
   const dummyUsers: User[] = [
@@ -206,101 +180,90 @@ function UserManagementPage() {
             ))}
           </Breadcrumbs>
 
-          <Title order={2} mb="lg">
-            User Management
-          </Title>
+          {isError ? (
+            <BaseCrudPage
+              isError={isError}
+              error={error as Error}
+              onRetry={refetch}
+            >
+              <></>
+            </BaseCrudPage>
+          ) : (
+            <Stack gap="md">
+              <BaseCrudPage.Header
+                title="User Management"
+                subtitle={`Total ${totalRecords} users in the system`}
+                actions={
+                  <>
+                    <ButtonImport label="Import" />
+                    <ButtonExport label="Export" />
+                    <ButtonAdd label="Tambah" onClick={() => handleAdd()} />
+                  </>
+                }
+              />
 
-          <Paper shadow="xs" p="md">
-            <TableToolbar
-              leftSide={
-                <>
-                  <TextInput
-                    placeholder="Cari..."
-                    value={search}
-                    onChange={(e) => setSearch(e.currentTarget.value)}
-                    leftSection={
-                      <IconSearch style={{ width: 16, height: 16 }} />
-                    }
-                    size="xs"
-                    w={180}
-                  />
-                  <Select
-                    data={[
-                      { value: "active", label: "Active" },
-                      { value: "inactive", label: "Inactive" },
-                    ]}
-                    value={status}
-                    onChange={setStatus}
-                    placeholder="Status"
-                    clearable
-                    size="xs"
-                    w={110}
-                  />
-                  <Select
-                    data={[
-                      { value: "admin", label: "Admin" },
-                      { value: "user", label: "User" },
-                      { value: "guest", label: "Guest" },
-                    ]}
-                    value={role}
-                    onChange={setRole}
-                    placeholder="Role"
-                    clearable
-                    size="xs"
-                    w={110}
-                  />
-                </>
-              }
-              rightSide={
-                <>
-                  <Button
-                    variant="default"
-                    leftSection={
-                      <IconFileImport style={{ width: 16, height: 16 }} />
-                    }
-                    size="xs"
-                    // onClick={handleImport}
-                  >
-                    Import
-                  </Button>
-                  <Button
-                    variant="default"
-                    leftSection={
-                      <IconFileExport style={{ width: 16, height: 16 }} />
-                    }
-                    size="xs"
-                    // onClick={handleExport}
-                  >
-                    Export
-                  </Button>
-                  <Button
-                    leftSection={<IconPlus style={{ width: 16, height: 16 }} />}
-                    size="xs"
-                    onClick={handleAdd}
-                  >
-                    Tambah
-                  </Button>
-                </>
-              }
-            />
-            <DataTable
-              columns={columns}
-              data={users}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-            <TablePagination
-              page={page}
-              total={totalRecords}
-              pageSize={pageSize}
-              onPageChange={setPage}
-              onPageSizeChange={(size) => {
-                setPageSize(size);
-                setPage(1); // Reset to first page if page size changes
-              }}
-              loading={isLoading}
-            />
-          </Paper>
+              <BaseCrudPage.Content isLoading={isLoading}>
+                <TableToolbar
+                  leftSide={
+                    <>
+                      <TextInput
+                        placeholder="Cari..."
+                        value={search}
+                        onChange={(e) => setSearch(e.currentTarget.value)}
+                        leftSection={
+                          <IconSearch style={{ width: 16, height: 16 }} />
+                        }
+                        size="xs"
+                        w={180}
+                      />
+                      <Select
+                        data={[
+                          { value: "active", label: "Active" },
+                          { value: "inactive", label: "Inactive" },
+                        ]}
+                        value={status}
+                        onChange={setStatus}
+                        placeholder="Status"
+                        clearable
+                        size="xs"
+                        w={110}
+                      />
+                      <Select
+                        data={[
+                          { value: "admin", label: "Admin" },
+                          { value: "user", label: "User" },
+                          { value: "guest", label: "Guest" },
+                        ]}
+                        value={role}
+                        onChange={setRole}
+                        placeholder="Role"
+                        clearable
+                        size="xs"
+                        w={110}
+                      />
+                    </>
+                  }
+                />
+                <DataTable
+                  columns={columns}
+                  data={users}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+                <TablePagination
+                  page={page}
+                  total={totalRecords}
+                  pageSize={pageSize}
+                  onPageChange={setPage}
+                  onPageSizeChange={(size) => {
+                    setPageSize(size);
+                    setPage(1);
+                  }}
+                  loading={isLoading}
+                />
+              </BaseCrudPage.Content>
+            </Stack>
+          )}
 
           <UserForm
             opened={openedAdd}

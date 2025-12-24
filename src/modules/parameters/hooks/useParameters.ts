@@ -5,8 +5,10 @@ import {
 } from "../services/parameter.service";
 import { useQuery } from "@tanstack/react-query";
 import type { ApiError } from "@/types/api";
+import { createQueryKeys } from "@/shared/hooks/queryKeys";
 
 const baseCrudHooks = createCrudHooks("parameters", parameterService);
+const keys = createQueryKeys("parameters");
 
 export const useParameters = baseCrudHooks.useList;
 export const useParameter = baseCrudHooks.useDetail;
@@ -17,7 +19,7 @@ export const useBulkDeleteParameters = baseCrudHooks.useBulkDelete;
 
 export function useParameterByCode(code: string) {
   return useQuery<Parameter, ApiError>({
-    queryKey: ["parameters", "code", code],
+    queryKey: keys.custom("code", code),
     queryFn: async () => {
       const response = await parameterService.getByCode(code);
       return response.data.data;

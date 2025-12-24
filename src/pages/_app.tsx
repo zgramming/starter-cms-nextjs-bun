@@ -11,6 +11,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 import { env } from "@/core/config/env";
 import Head from "next/head";
+import { ErrorBoundary } from "@/shared/components/ui/ErrorBoundary";
 
 const theme = createTheme({
   /** Primary Color - Elegant Green Theme */
@@ -147,17 +148,19 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme}>
-        <ModalsProvider>
-          <Head>
-            <title>Admin Dashboard</title>
-          </Head>
-          <Notifications position="top-right" zIndex={1000} />
-          <Component {...pageProps} />
-          {env.enableDevTools && <ReactQueryDevtools initialIsOpen={false} />}
-        </ModalsProvider>
-      </MantineProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider theme={theme}>
+          <ModalsProvider>
+            <Head>
+              <title>Admin Dashboard</title>
+            </Head>
+            <Notifications position="top-right" zIndex={1000} />
+            <Component {...pageProps} />
+            {env.enableDevTools && <ReactQueryDevtools initialIsOpen={false} />}
+          </ModalsProvider>
+        </MantineProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }

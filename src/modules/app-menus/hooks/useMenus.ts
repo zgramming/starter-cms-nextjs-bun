@@ -3,8 +3,10 @@ import { menuService, type Menu } from "../services/menu.service";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import type { ApiError } from "@/types/api";
 import { useMutationCallbacks } from "@/shared/utils/mutation-helpers";
+import { createQueryKeys } from "@/shared/hooks/queryKeys";
 
 const baseCrudHooks = createCrudHooks("menus", menuService);
+const keys = createQueryKeys("menus");
 
 export const useMenus = baseCrudHooks.useList;
 export const useMenu = baseCrudHooks.useDetail;
@@ -15,7 +17,7 @@ export const useBulkDeleteMenus = baseCrudHooks.useBulkDelete;
 
 export function useMenuTree() {
   return useQuery<Menu[], ApiError>({
-    queryKey: ["menus", "tree"],
+    queryKey: keys.custom("tree"),
     queryFn: async () => {
       const response = await menuService.getTree();
       return response.data.data;

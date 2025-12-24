@@ -2,8 +2,10 @@ import { createCrudHooks } from "@/shared/hooks/useCrudApi";
 import { categoryService, type Category } from "../services/category.service";
 import { useQuery } from "@tanstack/react-query";
 import type { ApiError } from "@/types/api";
+import { createQueryKeys } from "@/shared/hooks/queryKeys";
 
 const baseCrudHooks = createCrudHooks("categories", categoryService);
+const keys = createQueryKeys("categories");
 
 export const useCategories = baseCrudHooks.useList;
 export const useCategory = baseCrudHooks.useDetail;
@@ -14,7 +16,7 @@ export const useBulkDeleteCategories = baseCrudHooks.useBulkDelete;
 
 export function useCategoryTree() {
   return useQuery<Category[], ApiError>({
-    queryKey: ["categories", "tree"],
+    queryKey: keys.custom("tree"),
     queryFn: async () => {
       const response = await categoryService.getTree();
       return response.data.data;
