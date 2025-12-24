@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { roleApi } from "../api/role";
+import { roleService } from "@/modules/roles/services/role.service";
 import type { Role } from "@/types/user";
 
 interface UseRolesParams extends Record<string, unknown> {
@@ -12,7 +12,7 @@ export function useRoles(params: UseRolesParams = {}) {
   return useQuery({
     queryKey: ["roles", params],
     queryFn: async () => {
-      const response = await roleApi.getAll(params);
+      const response = await roleService.getAll(params);
       return response.data.data;
     },
   });
@@ -23,7 +23,7 @@ export function useCreateRole() {
 
   return useMutation({
     mutationFn: async (role: Omit<Role, "id">) => {
-      const response = await roleApi.create(role);
+      const response = await roleService.create(role);
       return response.data.data;
     },
     onSuccess: () => {
@@ -37,7 +37,7 @@ export function useUpdateRole() {
 
   return useMutation({
     mutationFn: async (role: Role) => {
-      const response = await roleApi.update(role.id, role);
+      const response = await roleService.update(role.id, role);
       return response.data.data;
     },
     onSuccess: () => {
@@ -51,7 +51,7 @@ export function useDeleteRole() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await roleApi.delete(id);
+      await roleService.delete(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["roles"] });

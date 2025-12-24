@@ -1,4 +1,3 @@
-import { createRestApiService } from "@/core/api/crud";
+import { BaseRepository } from "@/core/api/base-repository";
 
-// Module API - Application module management
-export const moduleApi = createRestApiService("modules");
+export const moduleApi = new BaseRepository("modules");

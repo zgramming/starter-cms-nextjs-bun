@@ -1,4 +1,3 @@
-import { createRestApiService } from "@/core/api/crud";
+import { BaseRepository } from "@/core/api/base-repository";
 
-// Menu API - Application menu management
-export const menuApi = createRestApiService("menus");
+export const menuApi = new BaseRepository("menus");

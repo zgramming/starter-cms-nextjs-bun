@@ -8,31 +8,29 @@ import type { User } from "@/types/user";
 import type { PaginatedResponse, ApiError } from "@/types/api";
 import { notifications } from "@mantine/notifications";
 import { queryKeys } from "./queryKeys";
-import { userApi } from "@/modules/setting/user/api/user";
+import { userService } from "@/modules/users/services/user.service";
 
-// Get all users with pagination
 export function useUsers(params?: {
   page?: number;
   pageSize?: number;
   search?: string;
-  [key: string]: unknown; // Allow any additional params
+  [key: string]: unknown;
 }) {
   return useQuery<PaginatedResponse<User>, ApiError>({
     queryKey: queryKeys.users.list(params),
     queryFn: async () => {
-      const response = await userApi.getAll(params);
+      const response = await userService.getAll(params);
       return response.data.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
 
-// Get single user by ID
 export function useUser(id: string, options?: UseQueryOptions<User, ApiError>) {
   return useQuery<User, ApiError>({
     queryKey: queryKeys.users.detail(id),
     queryFn: async () => {
-      const response = await userApi.getById(id);
+      const response = await userService.getById(id);
       return response.data.data;
     },
     enabled: !!id,
@@ -40,12 +38,11 @@ export function useUser(id: string, options?: UseQueryOptions<User, ApiError>) {
   });
 }
 
-// Create user mutation
 export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Partial<User>) => userApi.create(data),
+    mutationFn: (data: Partial<User>) => userService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() });
       notifications.show({
@@ -70,7 +67,7 @@ export function useUpdateUser() {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<User> }) =>
-      userApi.update(id, data),
+      userService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() });
       queryClient.invalidateQueries({
@@ -97,7 +94,7 @@ export function useDeleteUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => userApi.delete(id),
+    mutationFn: (id: string) => userService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() });
       notifications.show({
@@ -121,7 +118,7 @@ export function useBulkDeleteUsers() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (ids: string[]) => userApi.bulkDelete(ids),
+    mutationFn: (ids: string[]) => userService.bulkDelete(ids),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.users.lists() });
       notifications.show({

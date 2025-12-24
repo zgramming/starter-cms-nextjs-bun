@@ -2,18 +2,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ApiError } from "@/types/api";
 import { notifications } from "@mantine/notifications";
 import { createQueryKeys } from "./queryKeys";
+import { BaseRepository } from "@/core/api/base-repository";
 
-// Generic CRUD Hooks Factory
-// Use this to quickly create hooks for any resource without duplicating code
-
-export function createCrudHooks<T>(
-  resource: string,
-  api: ReturnType<typeof import("@/core/api/crud").createRestApiService<T>>
-) {
+export function createCrudHooks<T>(resource: string, api: BaseRepository<T>) {
   const keys = createQueryKeys(resource);
 
   return {
-    // Get all items with optional params
     useList: (params?: Record<string, unknown>) => {
       return useQuery({
         queryKey: keys.list(params),
@@ -24,7 +18,6 @@ export function createCrudHooks<T>(
       });
     },
 
-    // Get single item by ID
     useDetail: (id: string) => {
       return useQuery({
         queryKey: keys.detail(id),

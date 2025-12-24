@@ -1,4 +1,3 @@
-import { createRestApiService } from "@/core/api/crud";
+import { BaseRepository } from "@/core/api/base-repository";
 
-// Parameter API - Master data for parameters
-export const parameterApi = createRestApiService("parameters");
+export const parameterApi = new BaseRepository("parameters");

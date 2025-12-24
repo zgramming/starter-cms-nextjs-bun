@@ -5,14 +5,8 @@ import axios, {
   AxiosResponse,
 } from "axios";
 import { env } from "@/core/config/env";
-import type { ApiError } from "@/types/api";
+import type { ApiError, ApiResponse } from "@/types/api";
 
-// ==================== AXIOS INSTANCE ====================
-
-/**
- * HTTP Client - Axios instance with interceptors
- * Handles authentication via cookies and automatic token refresh
- */
 export const httpClient: AxiosInstance = axios.create({
   baseURL: env.apiBaseUrl,
   timeout: env.apiTimeout,
@@ -20,23 +14,17 @@ export const httpClient: AxiosInstance = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true, // Send cookies with requests
+  withCredentials: true,
 });
-
-// ==================== REQUEST INTERCEPTOR ====================
 
 httpClient.interceptors.request.use(
   (config) => {
-    // Cookies (auth-token, auth-refresh-token) are automatically sent by browser
-    // No need to manually set Authorization header
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
-
-// ==================== RESPONSE INTERCEPTOR ====================
 
 httpClient.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -47,32 +35,17 @@ httpClient.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
-        // Try to refresh token (refresh-token cookie is sent automatically)
-        // await axios.post(
-        //   `${env.apiBaseUrl}/auth/refresh`,
-        //   {},
-        //   { withCredentials: true } // Send cookies
-        // );
-
-        // Backend should set new auth-token cookie in response
-        // No need to manually save token - browser handles it
-
-        // Retry original request (new cookie will be sent automatically)
         return httpClient(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - redirect to login
-        // Clear cookies by calling logout endpoint or just redirect
         window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }
 
-    // Handle other errors
     const apiError: ApiError = {
       message:
         error.response?.data?.message || error.message || "An error occurred",
@@ -83,5 +56,50 @@ httpClient.interceptors.response.use(
     return Promise.reject(apiError);
   }
 );
+
+export const api = {
+  get: <T>(url: string, config?: AxiosRequestConfig) => {
+    return httpClient.get<ApiResponse<T>>(url, config);
+  },
+
+  post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
+    return httpClient.post<ApiResponse<T>>(url, data, config);
+  },
+
+  put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
+    return httpClient.put<ApiResponse<T>>(url, data, config);
+  },
+
+  patch: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) => {
+    return httpClient.patch<ApiResponse<T>>(url, data, config);
+  },
+
+  delete: <T>(url: string, config?: AxiosRequestConfig) => {
+    return httpClient.delete<ApiResponse<T>>(url, config);
+  },
+
+  upload: <T>(url: string, formData: FormData, config?: AxiosRequestConfig) => {
+    return httpClient.post<ApiResponse<T>>(url, formData, {
+      ...config,
+      headers: {
+        ...config?.headers,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  download: async (url: string, filename: string) => {
+    const response = await httpClient.get(url, {
+      responseType: "blob",
+    });
+
+    const blob = new Blob([response.data]);
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  },
+};
 
 export default httpClient;

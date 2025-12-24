@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { userApi } from "../services/user.service";
+import { userService } from "../services/user.service";
 import type { User } from "@/types/user";
 
 interface UseUsersParams extends Record<string, unknown> {
@@ -12,7 +12,7 @@ export function useUsers(params: UseUsersParams = {}) {
   return useQuery({
     queryKey: ["users", params],
     queryFn: async () => {
-      const response = await userApi.getAll(params);
+      const response = await userService.getAll(params);
       return response.data.data;
     },
   });
@@ -23,7 +23,7 @@ export function useCreateUser() {
 
   return useMutation({
     mutationFn: async (user: Omit<User, "id">) => {
-      const response = await userApi.create(user);
+      const response = await userService.create(user);
       return response.data.data;
     },
     onSuccess: () => {
@@ -37,7 +37,7 @@ export function useUpdateUser() {
 
   return useMutation({
     mutationFn: async (user: User) => {
-      const response = await userApi.update(user.id, user);
+      const response = await userService.update(user.id, user);
       return response.data.data;
     },
     onSuccess: () => {
@@ -51,7 +51,7 @@ export function useDeleteUser() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      await userApi.delete(id);
+      await userService.delete(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

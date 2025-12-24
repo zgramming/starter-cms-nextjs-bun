@@ -1,4 +1,3 @@
-import { createRestApiService } from "@/core/api/crud";
+import { BaseRepository } from "@/core/api/base-repository";
 
-// Category API - Master data for categories
-export const categoryApi = createRestApiService("categories");
+export const categoryApi = new BaseRepository("categories");
