@@ -12,14 +12,24 @@ Modern, production-ready admin dashboard starter template dengan **strict domain
 
 ## � Recent Updates (Dec 2024)
 
-✨ **Major Architecture Improvements** - Project restructured following industry best practices:
+✨ **Major Architecture & Quality Improvements** - Project enhanced with production-ready patterns:
+
+**Architecture:**
 
 - ✅ **Feature-based Modules** - `users/` and `roles/` extracted from nested `setting/`
 - ✅ **Service Layer Pattern** - Business logic separated into testable service classes
 - ✅ **Centralized Constants** - Type-safe `routes`, `permissions`, and `api-endpoints`
-- ✅ **Enterprise-Ready** - Following patterns from Netflix, Uber, and Google
 
-**Score: 9/10** ⭐ | **Status: Production Ready** | [See Implementation Summary](IMPLEMENTATION_SUMMARY.md)
+**Quality & DX:**
+
+- ✅ **Strict Query Keys** - Enforced consistent caching with factory pattern
+- ✅ **Error Boundaries** - Comprehensive error handling at app level
+- ✅ **BaseCrudPage Component** - Compound component pattern for flexible layouts
+- ✅ **Validation Utilities** - 20+ reusable validation rules with composer
+- ✅ **Loading Strategy** - Skeleton loaders and loading states
+- ✅ **Action Buttons** - 10 pre-built button components (Add, Import, Export, etc.)
+
+**Score: 9/10** ⭐ | **Status: Production Ready**
 
 ## 🎯 Core Principles
 
@@ -37,6 +47,11 @@ Modern, production-ready admin dashboard starter template dengan **strict domain
 - ✅ **Professional Design** - Green theme (#40c057) dengan Mantine UI components
 - ✅ **Fully Responsive** - Mobile-first design
 - ✅ **Reusable Components** - DataTable, TableToolbar, Forms, Modals
+- ✅ **BaseCrudPage** - Compound component pattern (Header + Content) for flexible CRUD layouts
+- ✅ **Action Buttons** - 10 pre-built buttons (ButtonAdd, ButtonImport, ButtonExport, etc.)
+- ✅ **Loading States** - LoadingState component with configurable messages
+- ✅ **Skeleton Loaders** - TableSkeleton for better perceived performance
+- ✅ **Error Boundaries** - React Error Boundary for graceful error handling
 - ✅ **Consistent Styling** - Single globals.css file
 
 ### 🔐 Authentication & Security
@@ -50,6 +65,8 @@ Modern, production-ready admin dashboard starter template dengan **strict domain
 
 - ✅ **Generic CRUD Factory** - `createRestApiService<T>()` for rapid development
 - ✅ **Feature-Specific APIs** - Extended APIs per domain
+- ✅ **Strict Query Keys** - Factory pattern with `createQueryKeys()` for consistent caching
+- ✅ **Validation Utilities** - 20+ reusable rules (required, email, minLength, etc.) with `composeValidators`
 - ✅ **Search & Filter** - Real-time search dengan debouncing
 - ✅ **Server Pagination** - Efficient data loading
 - ✅ **React Query Integration** - Simplified caching (no persistence)
@@ -126,9 +143,15 @@ starter-cms-nextjs-bun/
 │   │
 │   ├── shared/                 # Shared resources
 │   │   ├── components/
-│   │   │   ├── ui/            # DataTable, TableToolbar, Modals
+│   │   │   ├── ui/            # DataTable, TableToolbar, Modals, ActionButtons
+│   │   │   │   ├── ActionButtons.tsx     # ✨ ButtonAdd, ButtonImport, ButtonExport, etc.
+│   │   │   │   ├── LoadingState.tsx      # ✨ Loading component
+│   │   │   │   ├── TableSkeleton.tsx     # ✨ Table skeleton loader
+│   │   │   │   └── ErrorBoundary.tsx     # ✨ React Error Boundary
 │   │   │   └── layout/        # AdminLayout, MainSidebar, TopBar
+│   │   │       └── BaseCrudPage.tsx      # ✨ Compound CRUD layout
 │   │   ├── hooks/             # useCrudApi, useUserApi, useRoleApi
+│   │   ├── utils/             # ✨ validation-rules, mutation-helpers
 │   │   └── lib/               # http-client, api-service
 │   │
 │   ├── pages/                  # Next.js pages
@@ -338,6 +361,72 @@ function UsersPage() {
       onPageChange={setPage}
     />
   );
+}
+```
+
+### Use BaseCrudPage with Action Buttons
+
+```typescript
+import { BaseCrudPage } from "@/shared/components/layout/BaseCrudPage";
+import {
+  ButtonAdd,
+  ButtonImport,
+  ButtonExport,
+} from "@/shared/components/ui/ActionButtons";
+import { DataTable } from "@/shared/components/ui/DataTable";
+import { useUsers } from "@/modules/users/hooks/useUsers";
+
+function UsersPage() {
+  const { data, isLoading, refetch } = useUsers();
+  const [opened, setOpened] = useState(false);
+
+  return (
+    <>
+      <BaseCrudPage.Header
+        title="User Management"
+        subtitle={`Total ${data?.pagination?.total || 0} users`}
+        actions={
+          <>
+            <ButtonImport onClick={() => console.log("Import")} />
+            <ButtonExport onClick={() => console.log("Export")} />
+            <ButtonAdd onClick={() => setOpened(true)} />
+          </>
+        }
+      />
+      <BaseCrudPage.Content isLoading={isLoading} isError={false} withPaper>
+        <DataTable data={data?.data || []} />
+      </BaseCrudPage.Content>
+    </>
+  );
+}
+```
+
+### Use Validation Utilities
+
+```typescript
+import { useForm } from "@mantine/form";
+import {
+  validationRules,
+  composeValidators,
+} from "@/shared/utils/validation-rules";
+
+function UserForm() {
+  const form = useForm({
+    initialValues: { name: "", email: "", phone: "" },
+    validate: {
+      name: composeValidators(
+        validationRules.required("Name"),
+        validationRules.minLength(2)
+      ),
+      email: composeValidators(
+        validationRules.required("Email"),
+        validationRules.email
+      ),
+      phone: validationRules.phone,
+    },
+  });
+
+  return <form onSubmit={form.onSubmit(handleSubmit)}>...</form>;
 }
 ```
 
