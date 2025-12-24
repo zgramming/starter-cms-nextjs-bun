@@ -15,13 +15,6 @@ export interface LoginResponse {
   refreshToken: string;
 }
 
-export interface RegisterRequest {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;

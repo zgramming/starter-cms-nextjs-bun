@@ -18,13 +18,13 @@ import { DataTable, type Column } from "@/shared/components/ui/DataTable";
 import { TableToolbar } from "@/shared/components/ui/TableToolbar";
 import { LoadingState } from "@/shared/components/ui/LoadingState";
 import { ErrorState } from "@/shared/components/ui/ErrorState";
-import { UserForm } from "@/modules/setting/user/components/UserForm";
+import { UserForm } from "@/modules/users/components/UserForm";
 import {
   useUsers,
   useCreateUser,
   useUpdateUser,
   useDeleteUser,
-} from "@/modules/setting/user/hooks/useUsers";
+} from "@/modules/users/hooks/useUsers";
 import type { User } from "@/types/user";
 import { TablePagination } from "@/shared/components/ui/TablePagination";
 import {

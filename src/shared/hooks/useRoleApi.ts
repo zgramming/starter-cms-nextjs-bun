@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { roleApi } from "@/modules/setting/role/api/role";
+import { roleApi } from "@/modules/roles/services/role.service";
 import type { Role } from "@/types/user";
 import type { PaginatedResponse, ApiError } from "@/types/api";
 import { notifications } from "@mantine/notifications";

@@ -1,14 +1,10 @@
 import { apiService } from "@/shared/lib/api-service";
 import type { User } from "@/types/user";
-import type { LoginRequest, LoginResponse, RegisterRequest } from "@/types/api";
+import type { LoginRequest, LoginResponse } from "@/types/api";
 
 export const authApi = {
   login: (data: LoginRequest) => {
     return apiService.post<LoginResponse>("/auth/login", data);
-  },
-
-  register: (data: RegisterRequest) => {
-    return apiService.post<LoginResponse>("/auth/register", data);
   },
 
   logout: () => {

@@ -1,5 +1,4 @@
 import { apiService } from "@/shared/lib/api-service";
-import { createRestApiService } from "@/core/api/crud";
 import type { User } from "@/types/user";
 
 // Extend base CRUD API with custom user-specific endpoints

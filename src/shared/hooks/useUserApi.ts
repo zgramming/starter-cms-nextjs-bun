@@ -4,11 +4,11 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { userApi } from "@/modules/setting/user/api/user";
 import type { User } from "@/types/user";
 import type { PaginatedResponse, ApiError } from "@/types/api";
 import { notifications } from "@mantine/notifications";
 import { queryKeys } from "./queryKeys";
+import { userApi } from "@/modules/setting/user/api/user";
 
 // Get all users with pagination
 export function useUsers(params?: {
